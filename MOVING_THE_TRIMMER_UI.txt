@@ -1,0 +1,44 @@
+// Quick visual helper for moving the Trimmer UI work between editors.
+//
+// One-file handoff
+// -----------------
+// The whole interactive UI lives in a single file:
+//   src/screens/TrimmerScreen.tsx
+//
+// That file is self-contained for UI work: it owns the playhead state, the In/Out
+// time editors, the transport buttons, and all of the styles. It imports from the
+// app's shared modules (recordings, format, theme, types), so if you want it to
+// compile as a standalone React Native file in another editor, you would either:
+//   • point that editor at this same repo (recommended), or
+//   • replace the shared imports with inline shims for the types/format/theme values
+//     you need while you work on layout.
+//
+// What changed
+// ------------
+// - Root layout is now padded/boxed instead of edge-to-edge, so the top title and
+//   bottom save/cancel buttons stay reachable.
+// - The "Unable to load …" banner was removed. It was firing because the trimmer
+//   kept re-entering the error branch whenever the player status updated. Since the
+//   recording actually plays back, the banner was a false error.
+// - The playhead now actually moves during playback: the time next to PLAY/STOP is
+//   driven by `status.currentTime` from `useAudioPlayerStatus`, and the In/Out ruler
+//   is re-painted from the current In/Out times each render.
+//
+// To continue the UI work elsewhere
+// ---------------------------------
+// 1. Copy src/screens/TrimmerScreen.tsx to the other client.
+// 2. If that client cannot see this repo's src/, also copy the handful of modules it
+//    imports from the app:
+//      src/theme/index.ts            (colors, spacing, radius, typography)
+//      src/core/format.ts            (formatDuration, formatBytes)
+//      src/storage/recordings.ts     (RecordingEntry, RECORDINGS_FOLDER_NAME)
+//      src/screens/TrimmerScreen.types.ts
+//    For fastest iteration, copying the whole src/ folder is fine too.
+// 3. Work on layout/text/styles in TrimmerScreen.tsx.
+// 4. Bring the file back here by replacing src/screens/TrimmerScreen.tsx with the
+//    edited version. Keep the existing import paths intact so the rest of the app
+//    keeps compiling.
+//
+// If you want a true single-file copy that runs without the rest of the project,
+// say so and I can emit a standalone version of TrimmerScreen.tsx with the shared
+// imports inlined as local constants. For now, the file above is the one to move.
